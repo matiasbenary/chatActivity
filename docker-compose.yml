@@ -1,0 +1,33 @@
+version: "3.5"
+
+services:
+  redis:
+    image: "redis:alpine"
+    ports:
+      - "6364:6379"
+
+  db:
+    image: mariadb:10.5.11
+    container_name: chat-db
+    restart: unless-stopped
+    command: --max_allowed_packet=67108864
+    environment:
+      MYSQL_DATABASE: ${DB_DATABASE}
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+      MYSQL_USER: ${DB_USERNAME}
+      SERVICE_TAGS: dev
+      SERVICE_NAME: mysql
+    ports:
+      - 3306:3306
+    volumes:
+      - ./migration:/docker-entrypoint-initdb.d
+      # - /var/lib/mysql:/var/lib/mysql:rw
+    networks:
+      - chat
+
+volumes:
+  mysql_data:
+networks:
+  students_network:
+    driver: bridge
