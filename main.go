@@ -17,7 +17,7 @@ func main() {
 	flag.Parse()
 
 	database.CreateRedisClient()
-	db := database.InitDB()
+	db := database.InitDBMaria()
 	defer db.Close()
 
 	wsServer := NewWebsocketServer(&repository.RoomRepository{Db: db}, &repository.UserRepository{Db: db}, &repository.MessageRepository{Db: db})
