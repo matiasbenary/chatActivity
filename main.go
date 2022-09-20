@@ -2,19 +2,25 @@ package main
 
 import (
 	"context"
-	"flag"
 	"log"
 	"net/http"
+	"os"
 
+	"github.com/joho/godotenv"
 	"github.com/matiasbenary/chatActivity/database"
 	"github.com/matiasbenary/chatActivity/repository"
 )
 
-var addr = flag.String("addr", ":8100", "http server address")
 var ctx = context.Background()
 
 func main() {
-	flag.Parse()
+
+	err := godotenv.Load(".env")
+
+	if err != nil {
+		log.Fatalf("Error loading .env file")
+	}
+	var addr = os.Getenv("API_PORT")
 
 	database.CreateRedisClient()
 	db := database.InitDBMaria()
@@ -30,5 +36,5 @@ func main() {
 	fs := http.FileServer(http.Dir("./public"))
 	http.Handle("/", fs)
 
-	log.Fatal(http.ListenAndServe(*addr, nil))
+	log.Fatal(http.ListenAndServe(":"+addr, nil))
 }

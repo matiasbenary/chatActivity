@@ -3,12 +3,14 @@ package database
 import (
 	"database/sql"
 	"log"
+	"os"
 
 	_ "github.com/go-sql-driver/mysql"
 )
 
 func InitDBMaria() *sql.DB {
-	db, err := sql.Open("mysql", "homestead:secret@tcp(localhost:3306)/fonselp?parseTime=true")
+
+	db, err := sql.Open("mysql", os.Getenv("DB_URL"))
 	if err != nil {
 		log.Fatal(err)
 	}
