@@ -2,6 +2,7 @@ package database
 
 import (
 	"database/sql"
+	"fmt"
 	"log"
 	"os"
 
@@ -16,7 +17,7 @@ func InitDBMaria() *sql.DB {
 	}
 
 	defer db.Close()
-
+	fmt.Println(os.Getenv("DB_URL"))
 	sqlStmt := `	
 	CREATE TABLE IF NOT EXISTS room (
 		id VARCHAR(255) NOT NULL PRIMARY KEY,
