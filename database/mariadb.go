@@ -16,7 +16,6 @@ func InitDBMaria() *sql.DB {
 		log.Fatal(err)
 	}
 
-	defer db.Close()
 	fmt.Println(os.Getenv("DB_URL"))
 	sqlStmt := `	
 	CREATE TABLE IF NOT EXISTS room (

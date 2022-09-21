@@ -35,6 +35,12 @@ type UserRepository struct {
 }
 
 func (repo *UserRepository) AddUser(user models.User) {
+	userFind := repo.FindUserByEmail(user.GetEmail())
+
+	if userFind != nil {
+		return
+	}
+
 	stmt, err := repo.Db.Prepare("INSERT INTO user(id, name,email,role_id) values(?,?,?,?)")
 	checkErr(err)
 
@@ -69,7 +75,8 @@ func (repo *UserRepository) FindUserById(id string) models.User {
 
 func (repo *UserRepository) FindUserByEmail(email string) models.User {
 	println("FindUserByEmail")
-	row := repo.Db.QueryRow("SELECT id, name FROM user where email = ? LIMIT 1", email)
+	println(email)
+	row := repo.Db.QueryRow("SELECT id, name,email,role_id FROM user where email = ? LIMIT 1", email)
 
 	var user User
 
