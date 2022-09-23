@@ -1,7 +1,6 @@
 package main
 
 import (
-	"bytes"
 	"encoding/json"
 	"log"
 	"net/http"
@@ -192,6 +191,7 @@ func (client *Client) handleNewMessage(jsonMessage []byte) {
 	}
 
 	message.Sender = client
+	message.SendAt = time.Now().Format("2006-01-02 15:04:05")
 
 	switch message.Action {
 	case SendMessageAction:
@@ -299,20 +299,20 @@ func (client *Client) inviteTargetUser(target models.User, room *Room) {
 }
 
 func (client *Client) notifyRoomJoined(room *Room, sender models.User) {
-	msj := client.wsServer.messageRepository.FindRoomByID(room.GetId())
-	msjs, err := json.Marshal(msj)
-	if err != nil {
-		log.Println(err)
-	}
-	println(bytes.NewBuffer(msjs).String())
-	println(msjs)
-	println(room.GetId())
+	// msj := client.wsServer.messageRepository.FindRoomByID(room.GetId())
+	// msjs, err := json.Marshal(msj)
+	// if err != nil {
+	// 	log.Println(err)
+	// }
+	// println(bytes.NewBuffer(msjs).String())
+	// println(msjs)
+	// println(room.GetId())
 	message := Message{
 		Action:  RoomJoinedAction,
 		Target:  room,
 		Sender:  sender,
 		Message: "",
-		Others:  msj,
+		// Others:  msj,
 	}
 
 	client.send <- message.encode()

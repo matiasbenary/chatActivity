@@ -21,6 +21,7 @@ type Message struct {
 	Target  *Room       `json:"target"`
 	Sender  models.User `json:"sender"`
 	Others  interface{} `json:"others"`
+	SendAt  string      `json:"send_at"`
 }
 
 func (message *Message) encode() []byte {

@@ -3,6 +3,7 @@ package repository
 import (
 	"database/sql"
 	"log"
+	"time"
 
 	"github.com/google/uuid"
 	"github.com/matiasbenary/chatActivity/models"
@@ -45,9 +46,9 @@ type MessageRepository struct {
 //repo *MessageRepository
 
 func (repo *MessageRepository) AddMessage(message models.Message) {
-	stmt, err := repo.Db.Prepare("INSERT INTO message(id, value ,user_id , room_id) values(?,?,?,?)")
+	stmt, err := repo.Db.Prepare("INSERT INTO message(id, value ,user_id , room_id,send_at) values(?,?,?,?,?)")
 	checkErr(err)
-	_, err = stmt.Exec(message.GetId(), message.GetValue(), message.GetUserId(), message.GetRoomId())
+	_, err = stmt.Exec(message.GetId(), message.GetValue(), message.GetUserId(), message.GetRoomId(), message.GetSendAt())
 	checkErr(err)
 }
 
@@ -84,5 +85,6 @@ func NewMessage(value string, userId string, roomId string) *Message {
 		Value:  value,
 		UserId: userId,
 		RoomId: roomId,
+		SendAt: time.Now().Format("2006-01-02 15:04:05"),
 	}
 }
