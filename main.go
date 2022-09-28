@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"encoding/json"
 	"log"
 	"net/http"
 	"os"
@@ -31,6 +32,19 @@ func main() {
 
 	http.HandleFunc("/ws", func(w http.ResponseWriter, r *http.Request) {
 		ServeWs(wsServer, w, r)
+	})
+
+	http.HandleFunc("/moreMessage", func(w http.ResponseWriter, r *http.Request) {
+		msjId, ok := r.URL.Query()["msjId"]
+
+		if !ok || len(msjId[0]) < 1 {
+			log.Println("Url Param 'msjId' is missing")
+			return
+		}
+
+		msj := wsServer.messageRepository.MoreMessage(msjId[0])
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(msj)
 	})
 
 	fs := http.FileServer(http.Dir("./public"))

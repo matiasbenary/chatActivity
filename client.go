@@ -164,7 +164,7 @@ func ServeWs(wsServer *WsServer, w http.ResponseWriter, r *http.Request) {
 	role_id, ok := r.URL.Query()["roleId"]
 
 	if !ok || len(role_id[0]) < 1 {
-		log.Println("Url Param 'email' is missing")
+		log.Println("Url Param 'roleId' is missing")
 		return
 	}
 

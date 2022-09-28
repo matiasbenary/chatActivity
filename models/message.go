@@ -11,4 +11,5 @@ type Message interface {
 type MessageRepository interface {
 	AddMessage(message Message)
 	FindRoomByID(id string) []Message
+	MoreMessage(id string) []Message
 }
