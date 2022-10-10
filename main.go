@@ -47,6 +47,19 @@ func main() {
 		json.NewEncoder(w).Encode(msj)
 	})
 
+	http.HandleFunc("/lastMessage", func(w http.ResponseWriter, r *http.Request) {
+		roomId, ok := r.URL.Query()["roomId"]
+
+		if !ok || len(roomId[0]) < 1 {
+			log.Println("Url Param 'roomId' is missing")
+			return
+		}
+
+		msj := wsServer.messageRepository.LastMessage(roomId[0])
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(msj)
+	})
+
 	fs := http.FileServer(http.Dir("./public"))
 	http.Handle("/", fs)
 
