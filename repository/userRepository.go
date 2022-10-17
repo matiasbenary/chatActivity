@@ -43,17 +43,20 @@ func (repo *UserRepository) AddUser(user models.User) models.User {
 	userFind := repo.FindUserByEmail(user.GetEmail())
 
 	if userFind != nil {
+		println("encontrado")
 		println(userFind)
 		return userFind
 	}
-
+	println("hola")
+	println(userFind)
+	println("No deberia esta aqui")
 	stmt, err := repo.Db.Prepare("INSERT INTO user(id, name,email,role_id) values(?,?,?,?)")
 	checkErr(err)
 
-	res, err := stmt.Exec(user.GetId(), user.GetName(), user.GetEmail(), user.GetRoleId())
-	println(res)
+	_, err = stmt.Exec(user.GetId(), user.GetName(), user.GetEmail(), user.GetRoleId())
+
 	checkErr(err)
-	log.Printf("check %s", res)
+
 	userFind = repo.FindUserByEmail(user.GetEmail())
 	println(userFind)
 	return userFind
@@ -86,16 +89,21 @@ func (repo *UserRepository) FindUserById(id string) models.User {
 
 func (repo *UserRepository) FindUserByEmail(email string) models.User {
 	println("FindUserByEmail")
-	println(email)
-	row := repo.Db.QueryRow("SELECT id, name,email,role_id FROM user where email = ? LIMIT 1", email)
 
+	rows, err := repo.Db.Query("SELECT id, name,email,role_id FROM user where email = ? LIMIT 1", email)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer rows.Close()
 	var user User
-
-	if err := row.Scan(&user.ID, &user.Name, &user.Email, &user.RoleId); err != nil {
-		if err == sql.ErrNoRows {
-			return nil
+	for rows.Next() {
+		if err := rows.Scan(&user.ID, &user.Name, &user.Email, &user.RoleId); err != nil {
+			if err == sql.ErrNoRows {
+				println("email")
+				return nil
+			}
+			panic(err)
 		}
-		panic(err)
 	}
 
 	return &user
