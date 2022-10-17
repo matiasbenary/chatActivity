@@ -59,9 +59,6 @@ func (server *WsServer) Run() {
 }
 
 func (server *WsServer) registerClient(client *Client) {
-	// Add user to the repo
-
-	server.userRepository.AddUser(client)
 
 	// Publish user in PubSub
 	server.publishClientJoined(client)

@@ -9,6 +9,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/matiasbenary/chatActivity/database"
 	"github.com/matiasbenary/chatActivity/models"
+	"github.com/matiasbenary/chatActivity/repository"
 
 	"github.com/gorilla/websocket"
 )
@@ -54,18 +55,27 @@ type Client struct {
 	rooms map[*Room]bool
 }
 
-func newClient(conn *websocket.Conn, wsServer *WsServer, name string, email string, roleId string) *Client {
+func newClient(conn *websocket.Conn, wsServer *WsServer, user models.User) *Client {
 	return &Client{
-		ID:       uuid.New(),
-		Name:     name,
-		Email:    email,
-		RoleId:   roleId,
+		ID:       user.GetUUID(),
+		Name:     user.GetName(),
+		Email:    user.GetEmail(),
+		RoleId:   user.GetId(),
 		conn:     conn,
 		wsServer: wsServer,
 		send:     make(chan []byte, 256),
 		rooms:    make(map[*Room]bool),
 	}
 
+}
+
+func newUser(name string, email string, roleId string) *repository.User {
+	return &repository.User{
+		ID:     uuid.New(),
+		Name:   name,
+		Email:  email,
+		RoleId: roleId,
+	}
 }
 
 func (client *Client) readPump() {
@@ -173,8 +183,9 @@ func ServeWs(wsServer *WsServer, w http.ResponseWriter, r *http.Request) {
 		log.Println(err)
 		return
 	}
-
-	client := newClient(conn, wsServer, name[0], email[0], role_id[0])
+	userParams := newUser(name[0], email[0], role_id[0])
+	user := wsServer.userRepository.AddUser(userParams)
+	client := newClient(conn, wsServer, user)
 
 	go client.writePump()
 	go client.readPump()
@@ -318,6 +329,9 @@ func (client *Client) notifyRoomJoined(room *Room, sender models.User) {
 	client.send <- message.encode()
 }
 
+func (client *Client) GetUUID() uuid.UUID {
+	return client.ID
+}
 func (client *Client) GetId() string {
 	return client.ID.String()
 }

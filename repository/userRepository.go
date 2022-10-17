@@ -2,6 +2,7 @@ package repository
 
 import (
 	"database/sql"
+	"log"
 
 	"github.com/google/uuid"
 	"github.com/matiasbenary/chatActivity/models"
@@ -16,6 +17,10 @@ type User struct {
 
 func (user *User) GetId() string {
 	return user.ID.String()
+}
+
+func (user *User) GetUUID() uuid.UUID {
+	return user.ID
 }
 
 func (user *User) GetName() string {
@@ -34,18 +39,24 @@ type UserRepository struct {
 	Db *sql.DB
 }
 
-func (repo *UserRepository) AddUser(user models.User) {
+func (repo *UserRepository) AddUser(user models.User) models.User {
 	userFind := repo.FindUserByEmail(user.GetEmail())
 
 	if userFind != nil {
-		return
+		println(userFind)
+		return userFind
 	}
 
 	stmt, err := repo.Db.Prepare("INSERT INTO user(id, name,email,role_id) values(?,?,?,?)")
 	checkErr(err)
 
-	_, err = stmt.Exec(user.GetId(), user.GetName(), user.GetEmail(), user.GetRoleId())
+	res, err := stmt.Exec(user.GetId(), user.GetName(), user.GetEmail(), user.GetRoleId())
+	println(res)
 	checkErr(err)
+	log.Printf("check %s", res)
+	userFind = repo.FindUserByEmail(user.GetEmail())
+	println(userFind)
+	return userFind
 }
 
 func (repo *UserRepository) RemoveUser(user models.User) {
