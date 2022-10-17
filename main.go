@@ -59,6 +59,19 @@ func main() {
 		w.Header().Set("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(msj)
 	})
+	// http.HandleFunc("/getUser", func(w http.ResponseWriter, r *http.Request) {
+	// 	roomId, ok := r.URL.Query()["email"]
+
+	// 	if !ok || len(roomId[0]) < 1 {
+	// 		log.Println("Url Param 'email' is missing")
+	// 		return
+	// 	}
+	// 	// userParams := NewUser("tute", roomId[0], "1")
+	// 	// user := wsServer.userRepository.AddUser(userParams)
+	// 	user := wsServer.userRepository.FindUserByEmail(roomId[0])
+	// 	w.Header().Set("Content-Type", "application/json")
+	// 	json.NewEncoder(w).Encode(user)
+	// })
 
 	fs := http.FileServer(http.Dir("./public"))
 	http.Handle("/", fs)

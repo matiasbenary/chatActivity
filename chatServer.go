@@ -72,7 +72,7 @@ func (server *WsServer) unregisterClient(client *Client) {
 		delete(server.clients, client)
 
 		// Remove user from repo
-		server.userRepository.RemoveUser(client)
+		// server.userRepository.RemoveUser(client)
 
 		// Publish user left in PubSub
 		server.publishClientLeft(client)

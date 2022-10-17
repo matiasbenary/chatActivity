@@ -2,7 +2,6 @@ package repository
 
 import (
 	"database/sql"
-	"log"
 
 	"github.com/google/uuid"
 	"github.com/matiasbenary/chatActivity/models"
@@ -43,7 +42,6 @@ func (repo *UserRepository) AddUser(user models.User) models.User {
 	userFind := repo.FindUserByEmail(user.GetEmail())
 
 	if userFind != nil {
-		println("encontrado")
 		println(userFind)
 		return userFind
 	}
@@ -89,21 +87,17 @@ func (repo *UserRepository) FindUserById(id string) models.User {
 
 func (repo *UserRepository) FindUserByEmail(email string) models.User {
 	println("FindUserByEmail")
+	println("email")
+	print(email)
+	row := repo.Db.QueryRow("SELECT id, name,email,role_id FROM user where email = ? LIMIT 1", email)
 
-	rows, err := repo.Db.Query("SELECT id, name,email,role_id FROM user where email = ? LIMIT 1", email)
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer rows.Close()
 	var user User
-	for rows.Next() {
-		if err := rows.Scan(&user.ID, &user.Name, &user.Email, &user.RoleId); err != nil {
-			if err == sql.ErrNoRows {
-				println("email")
-				return nil
-			}
-			panic(err)
+
+	if err := row.Scan(&user.ID, &user.Name, &user.Email, &user.RoleId); err != nil {
+		if err == sql.ErrNoRows {
+			return nil
 		}
+		panic(err)
 	}
 
 	return &user

@@ -69,7 +69,7 @@ func newClient(conn *websocket.Conn, wsServer *WsServer, user models.User) *Clie
 
 }
 
-func newUser(name string, email string, roleId string) *repository.User {
+func NewUser(name string, email string, roleId string) *repository.User {
 	return &repository.User{
 		ID:     uuid.New(),
 		Name:   name,
@@ -183,7 +183,7 @@ func ServeWs(wsServer *WsServer, w http.ResponseWriter, r *http.Request) {
 		log.Println(err)
 		return
 	}
-	userParams := newUser(name[0], email[0], role_id[0])
+	userParams := NewUser(name[0], email[0], role_id[0])
 	user := wsServer.userRepository.AddUser(userParams)
 	client := newClient(conn, wsServer, user)
 
