@@ -14,6 +14,10 @@ import (
 
 var ctx = context.Background()
 
+	func enableCors(w *http.ResponseWriter) {
+		(*w).Header().Set("Access-Control-Allow-Origin", "*")
+	}
+
 func main() {
 
 	err := godotenv.Load(".env")
@@ -34,9 +38,6 @@ func main() {
 		ServeWs(wsServer, w, r)
 	})
 
-	func enableCors(w *http.ResponseWriter) {
-		(*w).Header().Set("Access-Control-Allow-Origin", "*")
-	}
 	http.HandleFunc("/moreMessage", func(w http.ResponseWriter, r *http.Request) {
 		enableCors(&w)
 		msjId, ok := r.URL.Query()["msjId"]
