@@ -34,7 +34,11 @@ func main() {
 		ServeWs(wsServer, w, r)
 	})
 
+	func enableCors(w *http.ResponseWriter) {
+		(*w).Header().Set("Access-Control-Allow-Origin", "*")
+	}
 	http.HandleFunc("/moreMessage", func(w http.ResponseWriter, r *http.Request) {
+		enableCors(&w)
 		msjId, ok := r.URL.Query()["msjId"]
 
 		if !ok || len(msjId[0]) < 1 {
@@ -48,6 +52,7 @@ func main() {
 	})
 
 	http.HandleFunc("/lastMessage", func(w http.ResponseWriter, r *http.Request) {
+		enableCors(&w)
 		roomId, ok := r.URL.Query()["roomId"]
 
 		if !ok || len(roomId[0]) < 1 {
