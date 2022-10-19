@@ -96,7 +96,7 @@ func (repo *MessageRepository) MoreMessage(roomId string) []models.Message {
 								inner join (select * FROM  message where id = ?) c
 								on m.send_at < c.send_at or (m.send_at = c.send_at and c.id != m.id) 
 								where m.room_id = c.room_id
-								order by send_at desc limit 3) p
+								order by send_at desc limit 10) p
 								join user u
 								on u.id = p.user_id
 								order by send_at asc `, roomId)
@@ -131,7 +131,7 @@ func (repo *MessageRepository) LastMessage(id string) []models.Message {
 								inner join (select * FROM  message ) c
 								on c.id = m.id
 								where m.room_id = ?
-								order by send_at desc limit 3) p
+								order by send_at desc limit 10) p
 								join user u
 								on u.id = p.user_id
 								order by send_at asc `, id)
