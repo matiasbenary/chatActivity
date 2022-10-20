@@ -58,9 +58,7 @@ type MessageRepository struct {
 func (repo *MessageRepository) AddMessage(message models.Message) {
 	stmt, err := repo.Db.Prepare("INSERT INTO message(id, value ,user_id , room_id,send_at) values(?,?,?,?,?)")
 	checkErr(err)
-	startDate, err := time.Parse("2006-01-02 15:04:05", message.GetSendAt())
-	checkErr(err)
-	_, err = stmt.Exec(message.GetId(), message.GetValue(), message.GetUserId(), message.GetRoomId(), startDate)
+	_, err = stmt.Exec(message.GetId(), message.GetValue(), message.GetUserId(), message.GetRoomId(), time.Now().Format("2006-01-02 15:04:05"))
 	checkErr(err)
 }
 
