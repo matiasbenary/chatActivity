@@ -202,7 +202,7 @@ func (client *Client) handleNewMessage(jsonMessage []byte) {
 	}
 
 	message.Sender = client
-	message.SendAt = time.Now().Format("2006-01-02 15:04:05")
+	message.SendAt = time.Now().Format(time.RFC3339)
 
 	switch message.Action {
 	case SendMessageAction:

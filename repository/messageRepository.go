@@ -165,6 +165,6 @@ func NewMessage(value string, userId string, roomId string) *Message {
 		Value:  value,
 		UserId: userId,
 		RoomId: roomId,
-		SendAt: time.Now().Format("2006-01-02 15:04:05"),
+		SendAt: time.Now().Format(time.RFC3339),
 	}
 }
