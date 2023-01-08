@@ -209,7 +209,7 @@ group by name ;`, time.Now().Add(-24*time.Hour))
 
 	for rows.Next() {
 		var msj Activity
-		if err := rows.Scan(&msj.Name, &msj.Cant, &msj.Id); err != nil {
+		if err := rows.Scan(&msj.Name, &msj.Id, &msj.Cant); err != nil {
 			log.Println(err)
 			if err == sql.ErrNoRows {
 				return nil
