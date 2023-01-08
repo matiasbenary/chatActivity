@@ -14,9 +14,9 @@ import (
 
 var ctx = context.Background()
 
-	func enableCors(w *http.ResponseWriter) {
-		(*w).Header().Set("Access-Control-Allow-Origin", "*")
-	}
+func enableCors(w *http.ResponseWriter) {
+	(*w).Header().Set("Access-Control-Allow-Origin", "*")
+}
 
 func main() {
 
@@ -55,13 +55,34 @@ func main() {
 	http.HandleFunc("/lastMessage", func(w http.ResponseWriter, r *http.Request) {
 		enableCors(&w)
 		roomId, ok := r.URL.Query()["roomId"]
-
 		if !ok || len(roomId[0]) < 1 {
 			log.Println("Url Param 'roomId' is missing")
 			return
 		}
 
 		msj := wsServer.messageRepository.LastMessage(roomId[0])
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(msj)
+	})
+
+	http.HandleFunc("/deleteMessage", func(w http.ResponseWriter, r *http.Request) {
+		enableCors(&w)
+		msjId, ok := r.URL.Query()["msjId"]
+
+		if !ok || len(msjId[0]) < 1 {
+			log.Println("Url Param 'msjId' is missing")
+			return
+		}
+
+		msj := wsServer.messageRepository.DeleteMessage(msjId[0])
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(msj)
+	})
+
+	http.HandleFunc("/lastActivity", func(w http.ResponseWriter, r *http.Request) {
+		enableCors(&w)
+
+		msj := wsServer.messageRepository.LastActivity()
 		w.Header().Set("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(msj)
 	})

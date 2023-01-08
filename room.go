@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"log"
+	"time"
 
 	"github.com/google/uuid"
 	"github.com/matiasbenary/chatActivity/database"
@@ -95,6 +96,7 @@ func (room *Room) notifyClientJoined(client *Client) {
 		Action:  SendMessageAction,
 		Target:  room,
 		Message: fmt.Sprintf(welcomeMessage, client.GetName()),
+		SendAt:  time.Now().Format(time.RFC3339),
 	}
 
 	room.publishRoomMessage(message.encode())

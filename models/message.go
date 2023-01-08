@@ -8,9 +8,17 @@ type Message interface {
 	GetRoomId() string
 }
 
+type Activity interface {
+	GetId() string
+	GetName() string
+	GetCant() string
+}
+
 type MessageRepository interface {
 	AddMessage(message Message)
 	FindRoomByID(id string) []Message
 	MoreMessage(id string) []Message
 	LastMessage(roomId string) []Message
+	DeleteMessage(id string) string
+	LastActivity() []Activity
 }
