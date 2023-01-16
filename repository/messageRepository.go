@@ -48,9 +48,10 @@ func (message *Message) GetName() string {
 }
 
 type Activity struct {
-	Id   string `json:"id"`
-	Cant string `json:"cant"`
-	Name string `json:"name"`
+	Id    string `json:"id"`
+	Cant  string `json:"cant"`
+	Name  string `json:"name"`
+	Users string `json:"users"`
 }
 
 func (activity *Activity) GetId() string {
@@ -63,6 +64,10 @@ func (activity *Activity) GetCant() string {
 
 func (activity *Activity) GetName() string {
 	return activity.Name
+}
+
+func (activity *Activity) GetUsers() string {
+	return activity.Users
 }
 
 // m Message
@@ -193,10 +198,12 @@ func (repo *MessageRepository) DeleteMessage(id string) string {
 
 func (repo *MessageRepository) LastActivity() []models.Activity {
 
-	rows, err := repo.Db.Query(`SELECT name,room.id,COUNT(*) 
+	rows, err := repo.Db.Query(`SELECT room.name,room.id,COUNT(*),(GROUP_CONCAT(DISTINCT user.name SEPARATOR ',')) as 'fullname'
 FROM chat.message
 join chat.room
 on room.id = message.room_id 
+join chat.user
+on user.id = message.user_id 
 where send_at >= ?
 group by name ;`, time.Now().Add(-24*time.Hour))
 
@@ -209,7 +216,7 @@ group by name ;`, time.Now().Add(-24*time.Hour))
 
 	for rows.Next() {
 		var msj Activity
-		if err := rows.Scan(&msj.Name, &msj.Id, &msj.Cant); err != nil {
+		if err := rows.Scan(&msj.Name, &msj.Id, &msj.Cant, &msj.Users); err != nil {
 			log.Println(err)
 			if err == sql.ErrNoRows {
 				return nil
